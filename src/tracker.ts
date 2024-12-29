@@ -1,10 +1,16 @@
-"use strict";
+import dgram from "dgram";
+import { Buffer } from "buffer";
+import { parse as urlParse } from "url";
 
-const dgram = require("dgram");
-const Buffer = require("buffer").Buffer;
-const urlParse = require("url").parse;
+type Torrent = {
+  announce: Buffer;
+};
 
-module.exports.getPeers = (torrent, callback) => {
+type AnnounceResp = {
+  peers: any[];
+};
+
+module.exports.getPeers = (torrent: Torrent, callback) => {
   const socket = dgram.createSocket("udp4");
   const url = torrent.announce.toString("utf8");
 
@@ -43,5 +49,7 @@ module.exports.getPeers = (torrent, callback) => {
 
   function buildAnnounceReq(connId) {}
 
-  function parseAnnounceResp(resp) {}
+  function parseAnnounceResp(resp: Buffer): AnnounceResp {
+    return { peers: [] };
+  }
 };
