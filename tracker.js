@@ -37,7 +37,11 @@ module.exports.getPeers = (torrent, callback) => {
     socket.send(message, 0, message.length, url.port, url.host, callback);
   }
 
-  function respType(resp) {}
+  function respType(resp) {
+    const action = resp.readUInt32BE(0);
+    if (action === 0) return "connect";
+    if (action === 1) return "announce";
+  }
 
   function buildConnReq() {
     const buf = Buffer.alloc(16);
