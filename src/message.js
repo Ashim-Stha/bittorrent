@@ -26,3 +26,24 @@ module.exports.buildHandshake = (torrent) => {
 };
 
 module.exports.buildKeepAlive = () => Buffer.alloc(4);
+
+module.exports.buildChoke = () => {
+  const buf = Buffer.alloc(5);
+
+  //length
+  buf.writeBigInt32BE(1, 0);
+
+  //id
+  buf.writeUInt8(0, 4);
+  return buf;
+};
+
+module.exports.buildUnchoke = () => {
+  const buffer = Buffer.alloc(5);
+
+  //length
+  buf.writeBigInt32BE(1, 0);
+
+  //id
+  buf.writeUInt8(1, 4);
+};
