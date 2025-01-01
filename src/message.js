@@ -39,11 +39,34 @@ module.exports.buildChoke = () => {
 };
 
 module.exports.buildUnchoke = () => {
-  const buffer = Buffer.alloc(5);
+  const buf = Buffer.alloc(5);
 
   //length
   buf.writeBigInt32BE(1, 0);
 
   //id
   buf.writeUInt8(1, 4);
+  return buf;
+};
+
+module.exports.buildInterested = () => {
+  const buf = Buffer.alloc(5);
+
+  //length
+  buf.writeBigInt32BE(1, 0);
+
+  //id
+  buf.writeUInt8(2, 4);
+  return buf;
+};
+
+module.exports.buildUninterested = () => {
+  const buf = Buffer.alloc(5);
+
+  //length
+  buf.writeBigInt32BE(1, 0);
+
+  //id
+  buf.writeUInt8(3, 4);
+  return buf;
 };
