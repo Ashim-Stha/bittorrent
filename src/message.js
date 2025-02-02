@@ -174,20 +174,26 @@ module.exports.buildPort = (payload) => {
 };
 
 module.exports.parse = (msg) => {
+  // Extract the message ID if the message length is greater than 4 bytes
   const id = msg.length > 4 ? msg.readInt8(4) : null;
+
+  // Extract the payload if the message length is greater than 5 bytes
   let payload = msg.length > 5 ? msg.slice(5) : null;
+
+  // If the message ID is 6 (request), 7 (piece), or 8 (cancel), further parse the payload
   if (id === 6 || id === 7 || id === 8) {
-    const rest = payload.slice(8);
+    const rest = payload.slice(8); // Extract the remaining part of the payload after the first 8 bytes
     payload = {
-      index: payload.readInt32BE(0),
-      begin: payload.readInt32BE(4),
+      index: payload.readInt32BE(0), // Read the piece index from the first 4 bytes of the payload
+      begin: payload.readInt32BE(4), // Read the begin offset from the next 4 bytes of the payload
     };
-    payload[id === 7 ? "block" : "length"] = rest;
+    payload[id === 7 ? "block" : "length"] = rest; // Assign the rest of the payload to 'block' if ID is 7, otherwise to 'length'
   }
 
+  // Return an object containing the message size, ID, and parsed payload
   return {
-    size: msg.readInt32BE(0),
-    id,
-    payload,
+    size: msg.readInt32BE(0), // Read the message size from the first 4 bytes
+    id, // The message ID
+    payload, // The parsed payload
   };
 };
