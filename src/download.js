@@ -12,7 +12,7 @@ module.exports = (torrent) => {
   });
 };
 
-function download(peer, torrent) {
+function download(peer, torrent, requested) {
   const socket = new net.Socket();
   socket.on("error", console.log);
   socket.connect(peer.port, peer.ip, () => {
@@ -21,8 +21,9 @@ function download(peer, torrent) {
   });
 
   //2
+  const queue = [];
   onWholeMsg(socket, (msg) => {
-    msgHandler(msg, socket, requested);
+    msgHandler(msg, socket, requested, queue);
   });
   // socket.on("data", (data) => {});
 }
@@ -44,7 +45,7 @@ function onWholeMsg(socket, callback) {
 }
 
 //2
-function msgHandler(msg, socket, requested) {
+function msgHandler(msg, socket, requested, queue) {
   if (isHandshake(msg)) {
     socket.write(message.buildInterested());
   } else {
@@ -52,9 +53,9 @@ function msgHandler(msg, socket, requested) {
 
     if (m.id === 0) chokeHandler();
     if (m.id === 1) unchokeHandler();
-    if (m.id === 4) haveHandler(m.payload, socket, requested);
+    if (m.id === 4) haveHandler(m.payload, socket, requested, queue);
     if (m.id === 5) bitfieldHandler(m.payload);
-    if (m.id === 7) pieceHandler(m.payload);
+    if (m.id === 7) pieceHandler(m.payload, socket, requested, queue);
   }
 }
 
@@ -68,13 +69,32 @@ function isHandshake(msg) {
 
 function chokeHandler() {}
 function unchokeHandler() {}
-function haveHandler(payload, socket, requested) {
+
+function haveHandler(payload, socket, requested, queue) {
   const pieceIndex = payload.readInt32BE(0);
+  queue.push(pieceIndex);
+  if (queue.length === 1) {
+    requestPiece(socket, requested, queue);
+  }
+
   if (!requested[pieceIndex]) {
     socket.write(message.buildRequest());
   }
 
   requested[pieceIndex] = true;
 }
+
 function bitfieldHandler(payload) {}
-function pieceHandler(payload) {}
+
+function pieceHandler(payload, socket, requested, queue) {
+  queue.shift();
+  requestPiece(socket, requested, queue);
+}
+
+function requestPiece(socket, requested, queue) {
+  if (requested[queue[0]]) {
+    queue.shift();
+  } else {
+    socket.write(message.buildRequest(pieceIndex));
+  }
+}
