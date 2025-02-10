@@ -120,7 +120,16 @@ function bitfieldHandler(socket, pieces, queue, payload) {
   if (queueEmpty) requestPiece(socket, pieces, queue);
 }
 
-function pieceHandler() {
+function pieceHandler(socket, pieces, queue, torrent, pieceResp) {
+  pieces.addReceived(pieceResp);
+
+  if (pieces.isDone()) {
+    socket.end();
+    console.log("Done");
+  } else {
+    requestPiece(socket, pieces, queue);
+  }
+
   // queue.shift();
   // requestPiece(socket, requested, queue);
 }
