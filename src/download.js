@@ -101,7 +101,24 @@ function haveHandler(socket, pieces, queue, payload) {
   // requested[pieceIndex] = true;
 }
 
-function bitfieldHandler() {}
+function bitfieldHandler(socket, pieces, queue, payload) {
+  // Check if the queue is empty before processing the bitfield
+  const queueEmpty = queue.length === 0;
+
+  // Iterate over each byte in the payload
+  payload.forEach((byte, i) => {
+    // Iterate over each bit in the byte
+    for (let j = 0; j < 8; j++) {
+      // If the least significant bit is 1, the peer has the piece
+      if (byte % 2) queue.queue(i * 8 + 7 - j);
+      // Shift the byte to the right to process the next bit
+      byte = Math.floor(byte / 2);
+    }
+  });
+
+  // If the queue was empty before processing the bitfield, request the first piece
+  if (queueEmpty) requestPiece(socket, pieces, queue);
+}
 
 function pieceHandler() {
   // queue.shift();
