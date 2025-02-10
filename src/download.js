@@ -84,7 +84,12 @@ function unchokeHandler(socket, pieces, queue) {
   requestPiece(socket, pieces, queue);
 }
 
-function haveHandler() {
+function haveHandler(socket, pieces, queue, payload) {
+  const pieceIndex = payload.readInt32BE(0);
+  const queueEmpty = queue.length === 0;
+  queue.queue(pieceIndex);
+  if (queueEmpty) requestPiece(socket, pieces, queue);
+
   // const pieceIndex = payload.readInt32BE(0);
   // queue.push(pieceIndex);
   // if (queue.length === 1) {
