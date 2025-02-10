@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bencode": "^0.9.0"
+    "bencode": "^0.9.0",
+    "big-integer": "^1.6.52"
   },
   "devDependencies": {
     "@types/bencode": "^2.0.4"

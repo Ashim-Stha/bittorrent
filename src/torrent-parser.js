@@ -1,9 +1,10 @@
+// filepath: /c:/Users/ashim/OneDrive/Desktop/bittorrent/src/torrent-parser.js
 "use strict";
 
 const fs = require("fs");
 const bencode = require("bencode");
 const crypto = require("crypto");
-const bignum = require("bignum");
+const bigInt = require("big-integer");
 
 module.exports.open = (filepath) => {
   return bencode.decode(fs.readFileSync(filepath));
@@ -14,7 +15,7 @@ module.exports.size = (torrent) => {
     ? torrent.info.files.map((file) => file.length).reduce((a, b) => a + b)
     : torrent.info.length;
 
-  return bignum.toBuffer(size, { size: 8 });
+  return bigInt(size).toArray(256).value;
 };
 
 module.exports.infoHash = (torrent) => {
@@ -25,7 +26,7 @@ module.exports.infoHash = (torrent) => {
 module.exports.BLOCK_LEN = Math.pow(2, 14);
 
 module.exports.piecelen = (torrent, pieceIndex) => {
-  const totalLength = bignum.fromBuffer(this.size(torrent)).toNumber();
+  const totalLength = bigInt.fromArray(this.size(torrent), 256).value;
   const pieceLength = torrent.info["piece length"];
 
   const lastPieceLength = totalLength % pieceLength;

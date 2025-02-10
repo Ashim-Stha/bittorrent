@@ -11,17 +11,17 @@ module.exports.buildHandshake = (torrent) => {
   buf.writeUint8(19, 0);
 
   //pstr
-  buf.writeBigInt32BE("BitTorrent protocol", 1);
+  buf.write("BitTorrent protocol", 1);
 
   //reserved
-  buf.writeBigInt32BE(0, 20);
-  buf.writeBigInt32BE(0, 24);
+  buf.writeUInt32BE(0, 20);
+  buf.writeUInt32BE(0, 24);
 
   //info hash
   torrentParser.infoHash(torrent).copy(buf, 28);
 
   //peer id
-  buf.write(util.genId());
+  util.genId().copy(buf, 48);
   return buf;
 };
 
@@ -31,7 +31,7 @@ module.exports.buildChoke = () => {
   const buf = Buffer.alloc(5);
 
   //length
-  buf.writeBigInt32BE(1, 0);
+  buf.writeUInt32BE(1, 0);
 
   //id
   buf.writeUInt8(0, 4);
@@ -42,7 +42,7 @@ module.exports.buildUnchoke = () => {
   const buf = Buffer.alloc(5);
 
   //length
-  buf.writeBigInt32BE(1, 0);
+  buf.writeUInt32BE(1, 0);
 
   //id
   buf.writeUInt8(1, 4);
@@ -53,7 +53,7 @@ module.exports.buildInterested = () => {
   const buf = Buffer.alloc(5);
 
   //length
-  buf.writeBigInt32BE(1, 0);
+  buf.writeUInt32BE(1, 0);
 
   //id
   buf.writeUInt8(2, 4);
@@ -64,7 +64,7 @@ module.exports.buildUninterested = () => {
   const buf = Buffer.alloc(5);
 
   //length
-  buf.writeBigInt32BE(1, 0);
+  buf.writeUInt32BE(1, 0);
 
   //id
   buf.writeUInt8(3, 4);
@@ -75,13 +75,13 @@ module.exports.buildHave = (payload) => {
   const buf = Buffer.alloc(9);
 
   //length
-  buf.writeBigInt32BE(5, 0);
+  buf.writeUInt32BE(5, 0);
 
   //id
   buf.writeUInt8(4, 4);
 
   //piece index
-  buf.writeBigUInt32BE(payload, 5);
+  buf.writeUInt32BE(payload, 5);
   return buf;
 };
 
