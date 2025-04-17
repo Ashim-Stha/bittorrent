@@ -10,6 +10,11 @@ This is a fully functional BitTorrent client implemented in Node.js. It demonstr
 - Handle BitTorrent protocol messages
 - Support for multiple peers
 - Progress tracking and completion notification
+- firt comment
+- second comment
+- third
+- hello
+- without edititing
 
 ## Project Structure
 
