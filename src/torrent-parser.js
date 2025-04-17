@@ -26,7 +26,7 @@ module.exports.infoHash = (torrent) => {
 module.exports.BLOCK_LEN = Math.pow(2, 14);
 
 module.exports.piecelen = (torrent, pieceIndex) => {
-  const totalLength = bigInt.fromArray(this.size(torrent), 256).value;
+  const totalLength = bignum.fromBuffer(this.size(torrent)).toNumber();
   const pieceLength = torrent.info["piece length"];
 
   const lastPieceLength = totalLength % pieceLength;
